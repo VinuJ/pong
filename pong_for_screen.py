@@ -13,13 +13,13 @@ if (serialPort.isOpen() == False):
 
 
 def blue():
-	sys.stdout.write(u"\u001b[46m \u001b[0m")
+	serialPort.write(u"\u001b[46m \u001b[0m")
 
 def grey():
-	sys.stdout.write(u"\u001b[47m \u001b[0m") 		
+	serialPort.write(u"\u001b[47m \u001b[0m") 		
 
 def red():
-	sys.stdout.write(u"\u001b[41m \u001b[0m") 												
+	serialPort.write(u"\u001b[41m \u001b[0m") 												
 
 def startScreen():
 
