@@ -5,7 +5,7 @@ import time
 
 
 # Open Pi serial port, speed 9600 bits per second
-serialPort = Serial("/dev/ttyAMA0", 9600)
+serialPort = Serial("/dev/ttyAMA0", 115200)
 # Should not need, but just in case
 
 if (serialPort.isOpen() == False):
@@ -65,13 +65,16 @@ time.sleep(1)
 c_up(12)
 c_right(4)
 
-def ball_move_dleft():
-	c_left(1)
-	grey()
-	c_down(1)
-	red()
+def ball_move_dleft(steps):
+	
+	for i in range(0, steps):	
+		c_left(1)
+		grey()
+		c_down(1)
+		red()
+		time.sleep(1)
 
-ball_move_dleft()
+ball_move_dleft(5)
 
 serialPort.close()
 
