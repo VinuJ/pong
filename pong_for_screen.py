@@ -5,11 +5,11 @@ import time
 
 
 # Open Pi serial port, speed 9600 bits per second
-#serialPort = Serial("/dev/ttyAMA0", 9600)
+serialPort = Serial("/dev/ttyAMA0", 9600)
 # Should not need, but just in case
 
-#if (serialPort.isOpen() == False):
-#	serialPort.open()
+if (serialPort.isOpen() == False):
+	serialPort.open()
 
 # Colours
 
@@ -63,14 +63,17 @@ startScreen()
 time.sleep(1)
 
 c_up(12)
-c_right(3)
-grey()
-c_down(1)
-red()
+c_right(4)
 
+def ball_move_dleft():
+	c_left(1)
+	grey()
+	c_down(1)
+	red()
 
+ball_move_dleft()
 
-#serialPort.close()
+serialPort.close()
 
 	
 
