@@ -65,7 +65,7 @@ time.sleep(1)
 c_up(12)
 c_right(4)
 
-def ball_move_dleft(steps):
+def ball_move_dr(steps): # move ball down-right
 	
 	for i in range(0, steps):	
 		c_left(1)
@@ -74,7 +74,35 @@ def ball_move_dleft(steps):
 		red()
 		time.sleep(1)
 
-ball_move_dleft(5)
+
+def ball_move_dl(steps): # move ball down-left
+	
+	for i in range(0, steps):	
+		c_left(1)
+		grey()
+		c_down(1)
+		c_left(2)
+		red()
+		time.sleep(1)
+
+def ball_move_ur(steps): # move ball up-right
+	
+	for i in range(0, steps):	
+		c_left(1)
+		grey()
+		c_up(1)
+		red()
+		time.sleep(1)
+
+def ball_move_ul(steps): # move ball up-left
+	
+	for i in range(0, steps):	
+		c_left(1)
+		grey()
+		c_up(1)
+		c_right(2)
+		red()
+		time.sleep(1)
 
 serialPort.close()
 
