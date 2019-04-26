@@ -5,11 +5,11 @@ import time
 
 
 # Open Pi serial port, speed 9600 bits per second
-serialPort = Serial("/dev/ttyAMA0", 9600)
+#serialPort = Serial("/dev/ttyAMA0", 9600)
 # Should not need, but just in case
 
-if (serialPort.isOpen() == False):
-	serialPort.open()
+#if (serialPort.isOpen() == False):
+#	serialPort.open()
 
 
 def blue():
@@ -38,7 +38,7 @@ def startScreen():
 
 startScreen()
 
-serialPort.close()
+#serialPort.close()
 	
 
 
