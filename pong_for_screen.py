@@ -15,14 +15,17 @@ if (serialPort.isOpen() == False):
 
 def blue():
 	serialPort.write(u"\u001b[46m \u001b[0m") 
+	serialPort.write(u"\u001b[1D")
 
 def grey():
 	serialPort.write(u"\u001b[47m \u001b[0m") 		
+	serialPort.write(u"\u001b[1D")
 
 def red():
 	serialPort.write(u"\u001b[41m \u001b[0m")
+	serialPort.write(u"\u001b[1D")
 
-# Cursor Navigation
+# Cursor Navigation	
 
 def c_up(steps):
 	for i in range(0, steps):
@@ -40,7 +43,23 @@ def c_left(steps):
 	for i in range(0, steps):
 		serialPort.write(u"\u001b[1D")
 		
+# Shift Cursor And Fill
 
+def shiftAndFill(shiftx, shifty, colour):
+	c_right(shiftx)
+	c_up(shifty)
+	colour()
+	c_left(shiftx)
+	c_down(shifty)
+
+# Ball Functions
+
+def drawBall(oldx, oldy, newx, newy):
+	
+	shiftAndFill(oldx, oldy, grey)
+	
+	shiftAndFill(newx, newy, red)	
+		
 # Starting Screen
 
 def startScreen():
@@ -51,58 +70,51 @@ def startScreen():
 			
 			if (j == 2 or j == 77) and (i >= 11 and i <= 13): # paddles
 				blue()
-			elif (j == 39) and (i in nets): # nets
+			# elif (j == 39) and (i in nets): # nets
 				blue()	
-			elif (j == 3) and (i == 12): # ball
+			# elif (j == 3) and (i == 12): # ball
 				red()	
 			else: # background
 				grey()		
+				
+# Ball Class
 
+class Ball:
+	def _init_(self, oldx, oldy, newx, newy):
+		self.oldx = oldx
+		self.oldy = oldy
+		self.newx = newx
+		self.newy = newy	
 startScreen()
 
-time.sleep(1)
+c_up() # move to (0, 0)
+playerServe = 1 # which player is serving
 
-c_up(12)
-c_right(4)
+if (playerServe == 1):
+	ball = Ball(3, 12, 3, 12)
+if (playerServe == 2):
+	ball = Ball(20, 12)
 
-def ball_move_dr(steps): # move ball down-right
+while(True): # constant loop for ball movement
+	drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy) # draw ball
 	
-	for i in range(0, steps):	
-		c_left(1)
-		grey()
-		c_down(1)
-		red()
-		time.sleep(1)
-
-
-def ball_move_dl(steps): # move ball down-left
+	ball.oldx = ball.newx
+	ball.oldy = ball.newy
 	
-	for i in range(0, steps):	
-		c_left(1)
-		grey()
-		c_down(1)
-		c_left(2)
-		red()
-		time.sleep(1)
+	if (playerServe == 1): # if player 1 serving, direction of ball is down-right
+		ball.newx += 1
+		ball.newy -= 1
+		
+		
+	if (playerServe == 2): # if player 2 is serving, direction of ball is down-left
+		ball.newx -= 1
+		ball.newy -= 1
+		
+		
+	time.sleep(1)
 
-def ball_move_ur(steps): # move ball up-right
-	
-	for i in range(0, steps):	
-		c_left(1)
-		grey()
-		c_up(1)
-		red()
-		time.sleep(1)
+		
 
-def ball_move_ul(steps): # move ball up-left
-	
-	for i in range(0, steps):	
-		c_left(1)
-		grey()
-		c_up(1)
-		c_right(2)
-		red()
-		time.sleep(1)
 
 serialPort.close()
 
