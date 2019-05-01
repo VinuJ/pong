@@ -51,6 +51,17 @@ def shiftAndFill(shiftx, shifty, colour):
 	colour()
 	c_left(shiftx)
 	c_down(shifty)
+	
+# Ball Class
+
+class Ball:
+	def _init_(self, oldx, oldy, newx, newy):
+		self.oldx = oldx
+		self.oldy = oldy
+		self.newx = newx
+		self.newy = newy
+		
+startScreen()
 
 # Ball Functions
 
@@ -59,6 +70,22 @@ def drawBall(oldx, oldy, newx, newy):
 	shiftAndFill(oldx, oldy, grey)
 	
 	shiftAndFill(newx, newy, red)	
+	
+def dr: # down-right
+	ball.newx += 1
+	ball.newy -= 1
+		
+def dl: # down-left
+	ball.newx -= 1
+	ball.newy -= 1
+	
+def ur: # up-right
+	ball.newx += 1
+	ball.newy += 1
+	
+def ul: # up-left
+	ball.newx -= 1
+	ball.newy += 1
 		
 # Starting Screen
 
@@ -77,38 +104,22 @@ def startScreen():
 			else: # background
 				grey()		
 				
-# Ball Class
-
-class Ball:
-	def _init_(self, oldx, oldy, newx, newy):
-		self.oldx = oldx
-		self.oldy = oldy
-		self.newx = newx
-		self.newy = newy	
-startScreen()
-
 c_up() # move to (0, 0)
+
 playerServe = 1 # which player is serving
 
 if (playerServe == 1):
 	ball = Ball(3, 12, 3, 12)
 if (playerServe == 2):
-	ball = Ball(20, 12)
+	ball = Ball(20, 12, 20, 12)
 
 while(True): # constant loop for ball movement
+	
 	drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy) # draw ball
 	
 	ball.oldx = ball.newx
 	ball.oldy = ball.newy
-	
-	if (playerServe == 1): # if player 1 serving, direction of ball is down-right
-		ball.newx += 1
-		ball.newy -= 1
 		
-		
-	if (playerServe == 2): # if player 2 is serving, direction of ball is down-left
-		ball.newx -= 1
-		ball.newy -= 1
 		
 		
 	time.sleep(1)
