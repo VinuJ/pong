@@ -51,22 +51,7 @@ def shiftAndFill(shiftx, shifty, colour):
 	colour()
 	c_left(shiftx+1)
 	c_down(shifty)
-
-# Ball Functions
-
-def drawBall(oldx, oldy, newx, newy):
 	
-	if (oldx == 39) and (oldy in 
-	shiftAndFill(oldx, oldy, grey)
-	
-	shiftAndFill(newx, newy, red)
-
-def forward():
-	ball.newx += 1
-
-def backward():
-	ball.newx -= 1	
-		
 # Starting Screen
 
 def startScreen():
@@ -82,6 +67,8 @@ def startScreen():
 			else: # background
 				grey()		
 				
+playerServe = 2 # which player is serving
+
 # Ball Class
 
 class Ball:
@@ -91,14 +78,22 @@ class Ball:
 		self.oldy = oldy
 		self.newx = newx
 		self.newy = newy
-
-		self.xdirection = 1	
+		
+		if (playerServe == 2):
+			self.xdirection = -1
+		else:
+			self.xdirection = 1	
+	
 		self.ydirection = 1
 
 	def drawBall (self, oldx, oldy, newx, newy):
-	
-		shiftAndFill(self.oldx, self.oldy, grey)
-	
+		nets = [2,3,6,7,10,11,14,15,18,19,22,23]
+		
+		if (oldx == 39) and (oldy in nets):
+			shiftAndFill(self.oldx, self.oldy, blue)
+		else:
+			shiftAndFill(self.oldx, self.oldy, grey)	
+				   
 		shiftAndFill(self.newx, self.newy, red)
 	
 	def updateBallPos (self, oldx, oldy, newx, newy):
@@ -120,13 +115,11 @@ def runGame():
 
 	c_left(80) # move to (0, 0)
 
-	playerServe = 1 # which player is serving
-
 	if (playerServe == 1):
 		ball = Ball(3, 11, 3, 11)
 	
 	if (playerServe == 2):
-		ball = Ball(77, 11, 77, 11)
+		ball = Ball(76, 11, 76, 11)
 
 
 	while(True):
