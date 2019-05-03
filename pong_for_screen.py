@@ -15,15 +15,15 @@ if (serialPort.isOpen() == False):
 
 def blue():
 	serialPort.write(u"\u001b[46m \u001b[0m") 
-	serialPort.write(u"\u001b[1D")
+	
 
 def grey():
 	serialPort.write(u"\u001b[47m \u001b[0m") 		
-	serialPort.write(u"\u001b[1D")
+	
 
 def red():
 	serialPort.write(u"\u001b[41m \u001b[0m")
-	serialPort.write(u"\u001b[1D")
+	
 
 # Cursor Navigation	
 
@@ -49,7 +49,7 @@ def shiftAndFill(shiftx, shifty, colour):
 	c_right(shiftx)
 	c_up(shifty)
 	colour()
-	c_left(shiftx)
+	c_left(shiftx+1)
 	c_down(shifty)
 
 # Ball Functions
@@ -59,6 +59,22 @@ def drawBall(oldx, oldy, newx, newy):
 	shiftAndFill(oldx, oldy, grey)
 	
 	shiftAndFill(newx, newy, red)	
+
+def dr: # down-right
+	ball.newx += 1
+	ball.newy -= 1
+		
+def dl: # down-left
+	ball.newx -= 1
+	ball.newy -= 1
+	
+def ur: # up-right
+	ball.newx += 1
+	ball.newy += 1
+	
+def ul: # up-left
+	ball.newx -= 1
+	ball.newy += 1
 		
 # Starting Screen
 
@@ -70,30 +86,29 @@ def startScreen():
 			
 			if (j == 2 or j == 77) and (i >= 11 and i <= 13): # paddles
 				blue()
-			# elif (j == 39) and (i in nets): # nets
-				blue()	
-			# elif (j == 3) and (i == 12): # ball
-				red()	
+		 	elif (j == 39) and (i in nets): # nets
+				blue()		
 			else: # background
 				grey()		
 				
 # Ball Class
 
 class Ball:
-	def _init_(self, oldx, oldy, newx, newy):
+	def __init__(self, oldx, oldy, newx, newy):
 		self.oldx = oldx
 		self.oldy = oldy
 		self.newx = newx
 		self.newy = newy	
 startScreen()
 
-c_up() # move to (0, 0)
+c_left(80) # move to (0, 0)
+
 playerServe = 1 # which player is serving
 
 if (playerServe == 1):
-	ball = Ball(3, 12, 3, 12)
+	ball = Ball(3, 11, 3, 11)
 if (playerServe == 2):
-	ball = Ball(20, 12)
+	ball = Ball(20, 11, 20, 11)
 
 while(True): # constant loop for ball movement
 	drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy) # draw ball
@@ -101,26 +116,12 @@ while(True): # constant loop for ball movement
 	ball.oldx = ball.newx
 	ball.oldy = ball.newy
 	
-	if (playerServe == 1): # if player 1 serving, direction of ball is down-right
-		ball.newx += 1
-		ball.newy -= 1
-		
-		
-	if (playerServe == 2): # if player 2 is serving, direction of ball is down-left
-		ball.newx -= 1
-		ball.newy -= 1
+	ball.newx += 1
+	ball.newy += 1
 		
 		
 	time.sleep(1)
 
 		
 
-
 serialPort.close()
-
-	
-
-
-
-        
-
