@@ -59,22 +59,6 @@ def drawBall(oldx, oldy, newx, newy):
 	shiftAndFill(oldx, oldy, grey)
 	
 	shiftAndFill(newx, newy, red)	
-
-def dr: # down-right
-	ball.newx += 1
-	ball.newy -= 1
-		
-def dl: # down-left
-	ball.newx -= 1
-	ball.newy -= 1
-	
-def ur: # up-right
-	ball.newx += 1
-	ball.newy += 1
-	
-def ul: # up-left
-	ball.newx -= 1
-	ball.newy += 1
 		
 # Starting Screen
 
@@ -99,6 +83,10 @@ class Ball:
 		self.oldy = oldy
 		self.newx = newx
 		self.newy = newy	
+		
+	def bounce(self, direction):
+		self.direction = -self.direction
+		   
 startScreen()
 
 c_left(80) # move to (0, 0)
@@ -110,15 +98,15 @@ if (playerServe == 1):
 if (playerServe == 2):
 	ball = Ball(20, 11, 20, 11)
 
+ball.direction = 1
+
 while(True): # constant loop for ball movement
 	drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy) # draw ball
 	
 	ball.oldx = ball.newx
 	ball.oldy = ball.newy
 	
-	ball.newx += 1
-	ball.newy += 1
-		
+	ball.newx = ball.oldx + ball.direction
 		
 	time.sleep(1)
 
