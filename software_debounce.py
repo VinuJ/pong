@@ -5,7 +5,7 @@ DEBOUNCE_TIME = 0.3
 SAMPLE_FREQUENCY = 10
 MAXIMUM = (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 
-integrator = 0	
+integrator = 2	
 
 class d_bounce:
 	def __init__(self, pin):
