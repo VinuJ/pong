@@ -56,9 +56,16 @@ def shiftAndFill(shiftx, shifty, colour):
 
 def drawBall(oldx, oldy, newx, newy):
 	
+	if (oldx == 39) and (oldy in 
 	shiftAndFill(oldx, oldy, grey)
 	
-	shiftAndFill(newx, newy, red)	
+	shiftAndFill(newx, newy, red)
+
+def forward():
+	ball.newx += 1
+
+def backward():
+	ball.newx -= 1	
 		
 # Starting Screen
 
@@ -78,38 +85,58 @@ def startScreen():
 # Ball Class
 
 class Ball:
-	def __init__(self, oldx, oldy, newx, newy):
+	
+	def __init__ (self, oldx, oldy, newx, newy):
 		self.oldx = oldx
 		self.oldy = oldy
 		self.newx = newx
-		self.newy = newy	
-		
-	def bounce(self, direction):
-		self.direction = -self.direction
-		   
-startScreen()
+		self.newy = newy
 
-c_left(80) # move to (0, 0)
+		self.xdirection = 1	
+		self.ydirection = 1
 
-playerServe = 1 # which player is serving
-
-if (playerServe == 1):
-	ball = Ball(3, 11, 3, 11)
-if (playerServe == 2):
-	ball = Ball(20, 11, 20, 11)
-
-ball.direction = 1
-
-while(True): # constant loop for ball movement
-	drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy) # draw ball
+	def drawBall (self, oldx, oldy, newx, newy):
 	
-	ball.oldx = ball.newx
-	ball.oldy = ball.newy
+		shiftAndFill(self.oldx, self.oldy, grey)
 	
-	ball.newx = ball.oldx + ball.direction
-		
-	time.sleep(1)
+		shiftAndFill(self.newx, self.newy, red)
+	
+	def updateBallPos (self, oldx, oldy, newx, newy):
+		self.oldx = self.newx
+		self.oldy = self.newy
+	
+		self.newx = self.oldx + self.xdirection
+		self.newy = self.oldy + self.ydirection
 
+		if (self.newx == 3) or (self.newx == 76):
+			self.xdirection = -self.xdirection
+
+		if (self.newy == 0) or (self.newy == 23):
+			self.ydirection = -self.ydirection
+
+def runGame():
+			
+	startScreen()
+
+	c_left(80) # move to (0, 0)
+
+	playerServe = 1 # which player is serving
+
+	if (playerServe == 1):
+		ball = Ball(3, 11, 3, 11)
+	
+	if (playerServe == 2):
+		ball = Ball(77, 11, 77, 11)
+
+
+	while(True):
+	
+		ball.drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy)
+
+		ball.updateBallPos(ball.oldx, ball.oldy, ball.newx, ball.newy)
+	
+		time.sleep(0.05)
 		
+runGame()
 
 serialPort.close()
