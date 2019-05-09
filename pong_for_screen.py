@@ -1,7 +1,7 @@
 from serial import Serial
 
 import sys
-
+import math
 import RPi.GPIO as GPIO
 import smbus
 import time
@@ -73,6 +73,36 @@ playerServe = 2 # which player is serving
 
 superpaddle = 0 # superpaddle
 
+# ADC 1 Function
+
+def countADC1():
+	
+	I2CADDR = 0x21 
+	CMD_CODE = 0x10
+
+	bus = smbus.SMBus(1) 
+
+	bus.write_byte( I2CADDR, CMD_CODE ) 
+	tmp = bus.read_word_data( I2CADDR, 0x00 ) 
+
+	tmp = ( ( ( (tmp << 8) + (tmp >> 8) ) | 0xFFF000 ) ^ 0xFFF000 )
+
+	tmp = math.floor(tmp / 155)
+	
+	
+	if (tmp <= 1):
+		countModified = 1
+	elif (tmp >= 22):
+		countModified = 22
+	else:
+		countModified = tmp
+
+	countModified = int(countModified)
+
+	return countModified
+
+	
+
 
 # ADC 2 Class
 
@@ -107,13 +137,13 @@ class v_resistor():
 
 # ADC 2 Input Function
 
-def count():
+def countADC2():
 	v_resistor1 = v_resistor( 9, 10 )
 
 	    
 	countA = v_resistor1.update()
 	
-
+	
 	if (countA <= 1):
 		countModified = 1
 	elif (countA >= 22):
@@ -123,7 +153,7 @@ def count():
 
 	outputString = "Count = " + str(countModified) 
 
-	print outputString
+	
 	return countModified
 
 # Ball Class
@@ -219,8 +249,8 @@ def runGame():
 		paddle1.oldy = paddle1.newy
 		paddle2.oldy = paddle2.newy
 
-		paddle1.newy = 	count()
-		paddle2.newy = 	count()
+		paddle1.newy = 	countADC1()
+		paddle2.newy = 	countADC2()
 	
 		time.sleep(0.05)
 
@@ -230,4 +260,3 @@ runGame()
 
 serialPort.close()
 GPIO.cleanup()
-
