@@ -67,7 +67,9 @@ def startScreen():
 			else: # background
 				grey()		
 				
-playerServe = 2 # which player is serving
+playerServe = 1 # which player is serving
+
+superpaddle = 0 # superpaddle
 
 # Ball Class
 
@@ -109,6 +111,26 @@ class Ball:
 		if (self.newy == 0) or (self.newy == 23):
 			self.ydirection = -self.ydirection
 
+class Paddle:
+	def __init__ (self, x, oldycentre, newycentre):
+		self.ycentre = ycentre
+
+	def drawPaddle (self, x, oldycentre, newycentre, superpaddle):
+		if (superpaddle == 1):
+
+		else:
+			shiftAndFill(self.x, self.oldycentre - 1, grey)
+			shiftAndFill(self.x, self.oldycentre, grey)
+			shiftAndFill(self.x, self.oldycentre + 1, grey)
+
+			shiftAndFill(self.x, self.oldycentre - 1, blue)
+			shiftAndFill(self.x, self.oldycentre, blue)
+			shiftAndFill(self.x, self.oldycentre + 1, blue)
+
+
+
+
+
 def runGame():
 			
 	startScreen()
@@ -121,8 +143,13 @@ def runGame():
 	if (playerServe == 2):
 		ball = Ball(76, 11, 76, 11)
 
+	paddle1 = Paddle(2, 11)
+	paddle2 = Paddle(77, 11)	
 
-	while(True):
+	while(True):	
+
+		paddle1.drawPaddle(paddle1.x, paddle1.ycentre, superpaddle)
+		paddle2.drawPaddle(paddle2.x, paddle2.ycentre, superpaddle)
 	
 		ball.drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy)
 
