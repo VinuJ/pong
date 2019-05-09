@@ -1,8 +1,10 @@
 from serial import Serial
 
 import sys
-import time
 
+import RPi.GPIO as GPIO
+import smbus
+import time
 
 # Open Pi serial port, speed 9600 bits per second
 serialPort = Serial("/dev/ttyAMA0", 115200)
@@ -70,6 +72,59 @@ def startScreen():
 playerServe = 2 # which player is serving
 
 superpaddle = 0 # superpaddle
+
+
+# ADC 2 Class
+
+class v_resistor():
+    def __init__( self, pinI, pinO  ):
+        self.count = 0
+        self.RESET_PIN = pinO
+        self.TEST_PIN = pinI
+
+        GPIO.setwarnings(False) 	
+        GPIO.setmode(GPIO.BCM) 		
+
+        GPIO.setup(self.RESET_PIN, GPIO.OUT) 
+        GPIO.output(self.RESET_PIN, False) 	
+
+        GPIO.setup(self.TEST_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    def update( self ):
+	self.count = 0
+        GPIO.output(self.RESET_PIN, True) 	
+        time.sleep(0.001)
+        GPIO.output(self.RESET_PIN, False) 
+
+        while GPIO.input(self.TEST_PIN) == 0:
+             self.count +=1		
+
+        return self.count 
+
+    def getCount( self ):
+        return self.count
+
+
+# ADC 2 Input Function
+
+def count():
+	v_resistor1 = v_resistor( 9, 10 )
+
+	    
+	countA = v_resistor1.update()
+	
+
+	if (countA <= 1):
+		countModified = 1
+	elif (countA >= 22):
+		countModified = 22
+	else:
+		countModified = countA
+
+	outputString = "Count = " + str(countModified) 
+
+	print outputString
+	return countModified
 
 # Ball Class
 
@@ -164,11 +219,15 @@ def runGame():
 		paddle1.oldy = paddle1.newy
 		paddle2.oldy = paddle2.newy
 
-		paddle1.newy += 1
-		paddle2.newy += 1		
-
+		paddle1.newy = 	count()
+		paddle2.newy = 	count()
+	
 		time.sleep(0.05)
-		
+
+
+
 runGame()
 
 serialPort.close()
+GPIO.cleanup()
+
