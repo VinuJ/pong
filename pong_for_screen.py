@@ -60,14 +60,14 @@ def startScreen():
     		for j in range(0, 80):	
 			nets = [0,1,4,5,8,9,12,13,16,17,20,21]
 			
-			if (j == 2 or j == 77) and (i >= 11 and i <= 13): # paddles
-				blue()
-		 	elif (j == 39) and (i in nets): # nets
+		#	if (j == 2 or j == 77) and (i >= 11 and i <= 13): # paddles
+		#		blue()
+		 	if (j == 39) and (i in nets): # nets
 				blue()		
 			else: # background
 				grey()		
 				
-playerServe = 1 # which player is serving
+playerServe = 2 # which player is serving
 
 superpaddle = 0 # superpaddle
 
@@ -111,24 +111,29 @@ class Ball:
 		if (self.newy == 0) or (self.newy == 23):
 			self.ydirection = -self.ydirection
 
+# Paddle Class
+
 class Paddle:
-	def __init__ (self, x, oldycentre, newycentre):
-		self.ycentre = ycentre
+	def __init__ (self, x, oldy, newy):
+		self.x = x
+		self.oldy = oldy
+		self.newy = newy
 
-	def drawPaddle (self, x, oldycentre, newycentre, superpaddle):
-		if (superpaddle == 1):
-
+	def drawPaddle (self, x, oldy, newy, superpaddle):
+		if (newy == oldy) and (oldy != 11):
+			newy = oldy	
 		else:
-			shiftAndFill(self.x, self.oldycentre - 1, grey)
-			shiftAndFill(self.x, self.oldycentre, grey)
-			shiftAndFill(self.x, self.oldycentre + 1, grey)
 
-			shiftAndFill(self.x, self.oldycentre - 1, blue)
-			shiftAndFill(self.x, self.oldycentre, blue)
-			shiftAndFill(self.x, self.oldycentre + 1, blue)
-
-
-
+			if (superpaddle == 1):
+				superpaddle == 1
+			else:
+				shiftAndFill(self.x, self.oldy - 1, grey)
+				shiftAndFill(self.x, self.oldy, grey)
+				shiftAndFill(self.x, self.oldy + 1, grey)
+	
+				shiftAndFill(self.x, self.newy - 1, blue)
+				shiftAndFill(self.x, self.newy, blue)
+				shiftAndFill(self.x, self.newy + 1, blue)
 
 
 def runGame():
@@ -143,18 +148,25 @@ def runGame():
 	if (playerServe == 2):
 		ball = Ball(76, 11, 76, 11)
 
-	paddle1 = Paddle(2, 11)
-	paddle2 = Paddle(77, 11)	
+	paddle1 = Paddle(2, 11, 11)
+	paddle2 = Paddle(77, 11, 11) 
 
-	while(True):	
 
-		paddle1.drawPaddle(paddle1.x, paddle1.ycentre, superpaddle)
-		paddle2.drawPaddle(paddle2.x, paddle2.ycentre, superpaddle)
+	while(True):
+
+		paddle1.drawPaddle(paddle1.x, paddle1.oldy, paddle1.newy, superpaddle)
+		paddle2.drawPaddle(paddle2.x, paddle2.oldy, paddle2.newy, superpaddle)
 	
 		ball.drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy)
 
 		ball.updateBallPos(ball.oldx, ball.oldy, ball.newx, ball.newy)
-	
+		
+		paddle1.oldy = paddle1.newy
+		paddle2.oldy = paddle2.newy
+
+		paddle1.newy += 1
+		paddle2.newy += 1		
+
 		time.sleep(0.05)
 		
 runGame()
