@@ -1,5 +1,4 @@
 from serial import Serial
-
 import sys
 import math
 import RPi.GPIO as GPIO
@@ -62,8 +61,6 @@ def startScreen():
     		for j in range(0, 80):	
 			nets = [0,1,4,5,8,9,12,13,16,17,20,21]
 			
-		#	if (j == 2 or j == 77) and (i >= 11 and i <= 13): # paddles
-		#		blue()
 		 	if (j == 39) and (i in nets): # nets
 				blue()		
 			else: # background
@@ -71,40 +68,7 @@ def startScreen():
 				
 playerServe = 2 # which player is serving
 
-superpaddle = 0 # superpaddle
-
-# ADC 1 Function
-
-def countADC1():
-	
-	I2CADDR = 0x21 
-	CMD_CODE = 0x10
-
-	bus = smbus.SMBus(1) 
-
-	bus.write_byte( I2CADDR, CMD_CODE ) 
-	tmp = bus.read_word_data( I2CADDR, 0x00 ) 
-
-	tmp = ( ( ( (tmp << 8) + (tmp >> 8) ) | 0xFFF000 ) ^ 0xFFF000 )
-
-	tmp = math.floor(tmp / 155)
-	
-	
-	if (tmp <= 1):
-		countModified = 1
-	elif (tmp >= 22):
-		countModified = 22
-	else:
-		countModified = tmp
-
-	countModified = int(countModified)
-
-	return countModified
-
-	
-
-
-# ADC 2 Class
+# ADC Classes
 
 class v_resistor():
     def __init__( self, pinI, pinO  ):
@@ -134,26 +98,94 @@ class v_resistor():
     def getCount( self ):
         return self.count
 
+class h_bounce:
+	def __init__(self, pin):
+		self.pin = pin
 
-# ADC 2 Input Function
+		GPIO.setwarnings(False) 	
+        	GPIO.setmode(GPIO.BCM) 	
 
-def countADC2():
+       	 	GPIO.setup(self.pin, GPIO.IN)
+		
+    	def output_state( self ):
+		state = GPIO.input(self.pin)
+        	return state
+
+# ADC Functions
+
+def superPad1():
+
+	button = h_bounce (11)
+
+	if (button.output_state() == 1):
+		return 1
+	else:
+		return 0
+
+def superPad2():
+
+	button = h_bounce (11)
+
+	if (button.output_state() == 1):
+		return 1
+	else:
+		return 0
+
+
+def countADC1(superp):
+	
+	I2CADDR = 0x21 
+	CMD_CODE = 0x10
+
+	bus = smbus.SMBus(1) 
+
+	bus.write_byte( I2CADDR, CMD_CODE ) 
+	tmp = bus.read_word_data( I2CADDR, 0x00 ) 
+
+	tmp = ( ( ( (tmp << 8) + (tmp >> 8) ) | 0xFFF000 ) ^ 0xFFF000 )
+
+	tmp = math.floor(tmp / 155)
+	
+	if (superp == 1):
+		if (tmp <= 2):
+			countModified = 2
+		elif (tmp >= 21):
+			countModified = 21
+		else:
+			countModified = tmp
+	else:
+		if (tmp <= 1):
+			countModified = 1
+		elif (tmp >= 22):
+			countModified = 22
+		else:
+			countModified = tmp
+				
+	countModified = int(countModified)
+
+	return countModified
+
+def countADC2(superp):
 	v_resistor1 = v_resistor( 9, 10 )
 
 	    
 	countA = v_resistor1.update()
 	
-	
-	if (countA <= 1):
-		countModified = 1
-	elif (countA >= 22):
-		countModified = 22
+	if (superp == 1):
+		if (countA <= 2):
+			countModified = 2
+		elif (countA >= 21):
+			countModified = 21
+		else:
+			countModified = countA
 	else:
-		countModified = countA
+		if (countA <= 1):
+			countModified = 1
+		elif (countA >= 22):
+			countModified = 22
+		else:
+			countModified = countA		
 
-	outputString = "Count = " + str(countModified) 
-
-	
 	return countModified
 
 # Ball Class
@@ -204,21 +236,20 @@ class Paddle:
 		self.oldy = oldy
 		self.newy = newy
 
-	def drawPaddle (self, x, oldy, newy, superpaddle):
-		if (newy == oldy) and (oldy != 11):
-			newy = oldy	
+	def drawPaddle (self, x, oldy, newy, superp):
+		if (self.newy == self.oldy) and (self.oldy != 11):
+			self.newy = self.oldy	
 		else:
-
-			if (superpaddle == 1):
-				superpaddle == 1
+			if (superp == 1):
+				for i in range(4):
+					shiftAndFill(self.x, self.oldy-2+i, grey)
+				for j in range(4):
+					shiftAndFill(self.x, self.newy-2+j, blue)
 			else:
-				shiftAndFill(self.x, self.oldy - 1, grey)
-				shiftAndFill(self.x, self.oldy, grey)
-				shiftAndFill(self.x, self.oldy + 1, grey)
-	
-				shiftAndFill(self.x, self.newy - 1, blue)
-				shiftAndFill(self.x, self.newy, blue)
-				shiftAndFill(self.x, self.newy + 1, blue)
+				for i in range(2):
+					shiftAndFill(self.x, self.oldy-1+i, grey)
+				for j in range(2):
+					shiftAndFill(self.x, self.newy-1+j, blue)
 
 
 def runGame():
@@ -239,18 +270,23 @@ def runGame():
 
 	while(True):
 
-		paddle1.drawPaddle(paddle1.x, paddle1.oldy, paddle1.newy, superpaddle)
-		paddle2.drawPaddle(paddle2.x, paddle2.oldy, paddle2.newy, superpaddle)
-	
-		ball.drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy)
+		# Paddle
 
-		ball.updateBallPos(ball.oldx, ball.oldy, ball.newx, ball.newy)
+		paddle1.drawPaddle(paddle1.x, paddle1.oldy, paddle1.newy, superPad1())
+		paddle2.drawPaddle(paddle2.x, paddle2.oldy, paddle2.newy, superPad2())
 		
 		paddle1.oldy = paddle1.newy
 		paddle2.oldy = paddle2.newy
 
-		paddle1.newy = 	countADC1()
-		paddle2.newy = 	countADC2()
+		paddle1.newy = 	countADC1(superPad1())
+		paddle2.newy = 	countADC2(superPad2())
+
+		# Ball
+
+		ball.drawBall(ball.oldx, ball.oldy, ball.newx, ball.newy)
+
+		ball.updateBallPos(ball.oldx, ball.oldy, ball.newx, ball.newy)
+		
 	
 		time.sleep(0.05)
 
@@ -259,4 +295,5 @@ def runGame():
 runGame()
 
 serialPort.close()
+
 GPIO.cleanup()
