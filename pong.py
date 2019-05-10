@@ -184,7 +184,6 @@ def countADC1(superp): # very little noise
 def countADC2(superp): # lots of noise
 	v_resistor1 = v_resistor( 9, 10 )
 
-	    
 	countA = v_resistor1.update()
 	
 	if (superp == 1):
@@ -319,12 +318,11 @@ def runRound():
 		if (ball.oldx == 4) or (ball.oldx == 75):
 			counter1+=1
 		
-
-		
 		if (counter1 > 1):			
 			if (ball.hitPaddle(ball.oldx, ball.oldy, paddle1.oldy, superPad1()) == 0):
 				print("miss")
 				shiftAndFill(ball.oldx, ball.oldy, grey)
+				GPIO.output(leds[tempx], False)
 				break
 				
 			elif (ball.hitPaddle(ball.oldx, ball.oldy, paddle1.oldy, superPad1()) == 1):
@@ -334,10 +332,43 @@ def runRound():
 			elif (ball.hitPaddle(ball.oldx, ball.oldy, paddle2.oldy, superPad2()) == 0):
 				print("miss")	
 				shiftAndFill(ball.oldx, ball.oldy, grey)
+				GPIO.output(leds[tempx], False)
 				break
 							
 			elif (ball.hitPaddle(ball.oldx, ball.oldy, paddle2.oldy, superPad2()) == 1):
 				print("hit")
+		
+		# Lights
+
+		GPIO.setwarnings(False)
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup((10, 5, 6, 12, 13, 16, 19, 20, 26), GPIO.OUT)
+
+		leds = (5, 6, 12, 13, 16, 19, 20, 26)
+		
+		tempx = ball.oldx
+		tempx = tempx - 2
+		tempx = float(tempx) / 9.125
+
+		if (tempx >= 8):
+			tempx = 8
+		else:
+			tempx = math.ceil(tempx)
+
+		tempx = tempx - 1
+		tempx = int(tempx)
+		
+		# now tempx is value from 0-7
+
+		if (ball.xdirection == -1) and (tempx < 7):
+			GPIO.output(leds[tempx+1], False)
+
+		elif (ball.xdirection == 1) and (tempx > 0):
+			GPIO.output(leds[tempx-1], False)
+
+		GPIO.output(leds[tempx], True)
+
+
 
 paddle1 = Paddle(2, 11, 11)
 paddle2 = Paddle(77, 11, 11) 
