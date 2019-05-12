@@ -262,6 +262,8 @@ class Ball:
 
 	def drawBall (self, oldx, oldy, newx, newy):
 		nets = [2,3,6,7,10,11,14,15,18,19,22,23]
+
+		# If statements so that the ball can go over the score without deleting it
 		
 		if player1.newscore == 0:
 			for i in range(len(l_no0x)):
@@ -363,16 +365,16 @@ class Ball:
 				if (oldx == r_no9x[i] and oldy == no9y[i]):
 					shiftAndFill(self.oldx, self.oldy, magenta)
 
-
+		# If statement so that the ball can go over the net withotu deleting it
 		
 		if (oldx == 39) and (oldy in nets):
 			shiftAndFill(self.oldx, self.oldy, blue)
-		else:
+		else: # Else just fill oldx and oldy with black, the background colour
 			shiftAndFill(self.oldx, self.oldy, black)
 
 
 				   
-		shiftAndFill(self.newx, self.newy, red)
+		shiftAndFill(self.newx, self.newy, red) # Fill new ball position red
 	
 	def updateBallPos (self, oldx, oldy, newx, newy):
 		self.oldx = self.newx
@@ -381,21 +383,21 @@ class Ball:
 		self.newx = self.oldx + self.xdirection
 		self.newy = self.oldy + self.ydirection
 
-		if (self.newx == 3) or (self.newx == 76):
+		if (self.newx == 3) or (self.newx == 76): # If the ball hits horizontal limits, reverse direction
 			self.xdirection = -self.xdirection
 
-		if (self.newy == 0) or (self.newy == 23):
+		if (self.newy == 0) or (self.newy == 23): # If the ball hits vertical limits, reverse direction
 			self.ydirection = -self.ydirection
 
 	def hitPaddle (self, oldx, oldy, paddley, superp):	
-				if (superp == 1):
-					if (self.oldx == 3) or (self.oldx == 76):
-						if (paddley-2 <= self.oldy <= paddley+2):
+				if (superp == 1): # Checking if the paddle is 5 wide
+					if (self.oldx == 3) or (self.oldx == 76): # If on the line just before the paddle
+						if (paddley-2 <= self.oldy <= paddley+2): # If ball's y pos is within the paddle's y pos
 							return 1
 						else:
 							return 0			
-				else:
-					if (self.oldx == 3) or (self.oldx == 76):
+				else: # Same thing for 3 wide paddle
+					if (self.oldx == 3) or (self.oldx == 76): 
 						if (paddley-1 <= self.oldy <= paddley+1):
 							return 1
 						else:
@@ -549,7 +551,9 @@ def startScreen():
 
 	c_left(80) # move to (0, 0)	
 
-	player1 = Player(0, 0)
+	# Set score to 0 - 0
+
+	player1 = Player(0, 0) 
 	player2 = Player(0, 0)
 
 startScreen()
